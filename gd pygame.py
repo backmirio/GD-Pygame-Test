@@ -2,14 +2,18 @@ import pygame
 
 pygame.init()
 pygame.font.init()
-pygame.display.set_caption("Test de mouvement du joueur")
-screen = pygame.display.set_mode((1280, 720))
+pygame.display.set_caption("Projet Yellow")
+screen = pygame.display.set_mode((1000, 720))
 clock = pygame.time.Clock()
 running = True
 dt = 0
 game_state = "menu"
+player_lives = 3
 
-player_pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 1.040)
+player_pos = pygame.Vector2(
+    screen.get_width() / 2,
+    screen.get_height() / 1.040
+    )
 
 while running:
     for event in pygame.event.get():
@@ -28,7 +32,7 @@ while running:
         screen.blit(title, (screen.get_width() / 2 - title.get_width() / 2, 100))
 
         # Bouton Play
-        play_button = pygame.Rect(540, 350, 200, 80)
+        play_button = pygame.Rect(400, 350, 200, 80)
         pygame.draw.rect(screen, (240, 255, 0), play_button)
 
         font_button = pygame.font.Font(None, 50)
@@ -59,6 +63,12 @@ while running:
             (int(player_pos.x), int(player_pos.y)),
             20
         )
+
+        # Affichage du nombre de vies
+        font = pygame.font.Font(None, 40)
+        lives_text = font.render("Vies : " + str(player_lives), True, (255, 255, 255))
+        screen.blit(lives_text, (20, 20))
+
 
     pygame.display.flip()
     clock.tick(60)
