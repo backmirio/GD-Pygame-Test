@@ -3,7 +3,7 @@ import random
 
 pygame.init()
 
-pygame.display.set_caption("Projet Yellow")
+pygame.display.set_caption("Yellow")
 
 screen = pygame.display.set_mode((1000, 900))
 
@@ -22,9 +22,9 @@ shot_speed = 700
 shot_timer = 0
 shot_delay = 0.2
 
-green_speed = 150
+green_speed = 75
 green_timer = 0
-green_delay = 1
+green_delay = 1.25
 
 greens = []
 
@@ -70,7 +70,7 @@ while running:
         font_title = pygame.font.Font(None, 80)
 
         title = font_title.render(
-            "PROJET YELLOW",
+            "YELLOW",
             True,
             (240, 255, 0)
         )
