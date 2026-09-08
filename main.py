@@ -26,7 +26,17 @@ green_speed = 75
 green_timer = 0
 green_delay = 1.25
 
+blue_speed = 100
+blue_timer = 0
+blue_delay = 2.5
+
+red_speed = 85
+red_timer = 0
+red_delay = 3.5
+
 greens = []
+blues = []
+reds = []
 
 player_img = pygame.image.load("assets/yellow.png").convert_alpha()
 player_img = pygame.transform.scale(player_img, (50, 50))
@@ -36,6 +46,12 @@ player_img_right = player_img
 
 green_img = pygame.image.load("assets/green.png").convert_alpha()
 green_img = pygame.transform.scale(green_img, (50, 50))
+
+blue_img = pygame.image.load("assets/blue.png").convert_alpha()
+blue_img = pygame.transform.scale(blue_img, (50, 50))
+
+red_img = pygame.image.load("assets/red.png").convert_alpha()
+red_img = pygame.transform.scale(red_img, (50, 50))
 
 heart_img = pygame.image.load("assets/heart.png").convert_alpha()
 heart_img = pygame.transform.scale(heart_img, (30, 30))
@@ -154,6 +170,40 @@ while running:
 
             green_timer = 0
 
+        blue_timer += dt
+
+        if blue_timer >= blue_delay:
+
+            blues.append({
+                "pos": pygame.Vector2(
+                    random.randint(
+                        25,
+                        screen.get_width() - 25
+                    ),
+                    50
+                ),
+                "hp": 2
+            })
+
+            blue_timer = 0
+
+        red_timer += dt
+
+        if red_timer >= red_delay:
+
+            reds.append({
+                "pos": pygame.Vector2(
+                    random.randint(
+                        25,
+                        screen.get_width() - 25
+                    ),
+                    50
+                ),
+                "hp": 1
+            })
+
+            red_timer = 0
+
         shot_timer += dt
 
         if keys[pygame.K_SPACE] and shot_timer >= shot_delay:
@@ -246,7 +296,130 @@ while running:
 
                     break
 
+        for blue in blues:
+
+            blue["pos"].y += blue_speed * dt
+
+            blue_rect = blue_img.get_rect(
+                center=(
+                    int(blue["pos"].x),
+                    int(blue["pos"].y)
+                )
+            )
+
+            if blue_rect.colliderect(player_img.get_rect(
+                center=(int(player_pos.x), int(player_pos.y))
+            )) and invincible_timer <= 0:
+                
+                player_lives -= 1
+                invincible_timer = invincible_duration
+                blues.remove(blue)
+                break
+
+            screen.blit(
+                blue_img,
+                (
+                    int(blue["pos"].x - 25),
+                    int(blue["pos"].y - 25)
+                )
+            )
+
+            pygame.draw.rect(
+                screen,
+                (0, 100, 255),
+                (
+                    int(blue["pos"].x - 25),
+                    int(blue["pos"].y - 35),
+                    int(50 * (blue["hp"] / 2)),
+                    5
+                )
+            )
+
+            for shot in player_shots:
+
+                if blue_rect.colliderect(shot):
+
+                    blue["hp"] -= 1
+                    player_shots.remove(shot)
+
+                    break
+        
         greens_to_remove = []
+        blues_to_remove = []
+        reds_to_remove = []
+
+        for blue in blues:
+
+            if blue["pos"].y > screen.get_height() + 25:
+                player_lives -= 1
+                blues_to_remove.append(blue)
+
+            elif blue["hp"] <= 0:
+                blues_to_remove.append(blue)
+
+        for blue in blues_to_remove:
+            blues.remove(blue)
+
+        for red in reds:
+            red["pos"].y += red_speed * dt
+
+            red_rect = red_img.get_rect(
+                center=(
+                    int(red["pos"].x),
+                    int(red["pos"].y)
+                )
+            )
+
+            if red_rect.colliderect(player_img.get_rect(
+                center=(int(player_pos.x), int(player_pos.y))
+            )):
+                
+                player_lives -= 1
+                reds.remove(red)
+                break
+
+            for shot in player_shots:
+                
+                if red_rect.colliderect(shot):
+                    red["hp"] -= 1
+                    player_shots.remove(shot)
+                    break
+
+            for red in reds:
+
+                if red["pos"].y > screen.get_height() + 25:
+                    player_lives -= 1
+                    reds.remove(red)
+
+                elif red["hp"] <= 0:
+                    reds.remove(red)
+
+            for red in reds_to_remove:
+                reds.remove(red)
+
+            screen.blit(red_img, red_rect)
+
+            pygame.draw.rect(
+                screen,
+                (100, 0, 0),
+                (
+                    int(red["pos"].x - 25),
+                    int(red["pos"].y - 35),
+                    50,
+                    5
+                )
+            )
+
+            pygame.draw.rect(
+                screen,
+                (255, 0, 0),
+                (
+                    int(red["pos"].x - 25),
+                    int(red["pos"].y - 35),
+                    int(50 * (red["hp"] / 1)),
+                    5
+                )
+            )
 
         for green in greens:
 
