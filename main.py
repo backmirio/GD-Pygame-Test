@@ -5,7 +5,7 @@ pygame.init()
 
 pygame.display.set_caption("Projet Yellow")
 
-screen = pygame.display.set_mode((1000, 720))
+screen = pygame.display.set_mode((1000, 800))
 
 clock = pygame.time.Clock()
 
@@ -246,12 +246,19 @@ while running:
 
                     break
 
-        greens = [
-            green
-            for green in greens
-            if green["hp"] > 0
-            and green["pos"].y < screen.get_height() + 25
-        ]
+        greens_to_remove = []
+
+        for green in greens:
+
+            if green["pos"].y > screen.get_height() + 25:
+                player_lives -= 1
+                greens_to_remove.append(green)
+
+            elif green["hp"] <= 0:
+                greens_to_remove.append(green)
+
+        for green in greens_to_remove:
+            greens.remove(green)
 
         player_shots = [
             shot
@@ -294,6 +301,48 @@ while running:
                 200
             )
         )
+
+        restart_button = pygame.Rect(
+            400,
+            350,
+            200,
+            80
+        )
+
+        pygame.draw.rect(
+            screen,
+            (240, 255, 0),
+            restart_button
+        )
+
+        font_button = pygame.font.Font(None, 50)
+
+        restart_text = font_button.render(
+            "RESTART",
+            True,
+            (0, 0, 0)
+        )
+
+        restart_text_rect = restart_text.get_rect(
+            center=restart_button.center
+        )
+
+        screen.blit(
+            restart_text,
+            restart_text_rect
+        )
+
+        if game_state == "game_over":
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+
+                if restart_button.collidepoint(event.pos):
+
+                    game_state = "game"
+                    player_lives = 3
+                    greens.clear()
+                    player_shots.clear()
+                    invincible_timer = 0
     pygame.display.flip()
 
 pygame.quit()
