@@ -14,6 +14,7 @@ running = True
 game_state = "menu"
 
 player_lives = 3
+score = 0
 invincible_timer = 0
 invincible_duration = 1.5
 
@@ -355,6 +356,7 @@ while running:
                 blues_to_remove.append(blue)
 
             elif blue["hp"] <= 0:
+                score += 25
                 blues_to_remove.append(blue)
 
         for blue in blues_to_remove:
@@ -385,18 +387,6 @@ while running:
                     player_shots.remove(shot)
                     break
 
-            for red in reds:
-
-                if red["pos"].y > screen.get_height() + 25:
-                    player_lives -= 1
-                    reds.remove(red)
-
-                elif red["hp"] <= 0:
-                    reds.remove(red)
-
-            for red in reds_to_remove:
-                reds.remove(red)
-
             screen.blit(red_img, red_rect)
 
             pygame.draw.rect(
@@ -421,6 +411,19 @@ while running:
                 )
             )
 
+        for red in reds:
+            if red["pos"].y > screen.get_height() + 25:
+                player_lives -= 1
+                reds_to_remove.append(red)
+
+            elif red["hp"] <= 0:
+                score += 75
+                reds_to_remove.append(red)
+
+        for red in reds_to_remove:
+            reds.remove(red)
+
+
         for green in greens:
 
             if green["pos"].y > screen.get_height() + 25:
@@ -428,6 +431,7 @@ while running:
                 greens_to_remove.append(green)
 
             elif green["hp"] <= 0:
+                score += 50
                 greens_to_remove.append(green)
 
         for green in greens_to_remove:
@@ -448,7 +452,6 @@ while running:
         )
 
         for i in range(player_lives):
-
             screen.blit(
                 heart_img,
                 (
@@ -456,6 +459,20 @@ while running:
                     10
                 )
             )
+
+        score_text = font_button.render(
+            f"Score: {score}",
+            True,
+            (240, 255, 0)
+        )
+
+        screen.blit(
+            score_text,
+            (
+                screen.get_width() - score_text.get_width() - 20,
+                10,
+            )
+        )
 
     elif game_state == "game_over":
 
@@ -513,8 +530,19 @@ while running:
 
                     game_state = "game"
                     player_lives = 3
+                    score = 0
                     greens.clear()
+                    blues.clear()
+                    reds.clear()
                     player_shots.clear()
+
+                    player_pos.x = screen.get_width() / 2
+                    player_pos.y = screen.get_height() / 1.040
+
+                    green_timer = 0
+                    blue_timer = 0
+                    red_timer = 0
+                    
                     invincible_timer = 0
     pygame.display.flip()
 
