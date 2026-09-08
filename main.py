@@ -9,6 +9,10 @@ running = True
 dt = 0
 game_state = "menu"
 player_lives = 3
+player_img = pygame.image.load("assets/yellow.png").convert_alpha()
+player_img = pygame.transform.scale(player_img, (50, 50))
+player_img_left = pygame.transform.flip(player_img, True, False)
+player_img_right = player_img
 
 player_pos = pygame.Vector2(
     screen.get_width() / 2,
@@ -28,7 +32,7 @@ while running:
     if game_state == "menu":
         # Titre
         font_title = pygame.font.Font(None, 80)
-        title = font_title.render("PAC MAN", True, (240, 255, 0))
+        title = font_title.render("PROJET YELLOW", True, (240, 255, 0))
         screen.blit(title, (screen.get_width() / 2 - title.get_width() / 2, 100))
 
         # Bouton Play
@@ -47,22 +51,22 @@ while running:
 
         if keys[pygame.K_LEFT]:
             player_pos.x -= 10
+            player_img = player_img_left
 
         if keys[pygame.K_RIGHT]:
             player_pos.x += 10
+            player_img = player_img_right
 
-        if player_pos.x < 20:
-            player_pos.x = 20
+        if player_pos.x < 25:
+            player_pos.x = 25
 
-        if player_pos.x > screen.get_width() - 20:
-            player_pos.x = screen.get_width() - 20
+        if player_pos.x > screen.get_width() - 25:
+            player_pos.x = screen.get_width() - 25
 
-        pygame.draw.circle(
-            screen,
-            (240, 255, 0),
-            (int(player_pos.x), int(player_pos.y)),
-            20
-        )
+        screen.blit(
+        player_img,
+        (int(player_pos.x - 25), int(player_pos.y - 25))
+        )  
 
         # Affichage du nombre de vies
         font = pygame.font.Font(None, 40)
