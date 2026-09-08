@@ -45,20 +45,51 @@ The project is being developed progressively alongside my Python studies.
 * [x] Life system
 * [x] Player shooting
 * [x] Green enemies
+* [x] Blue enemies
+* [x] Red enemies
 * [x] Enemy health points
 * [x] Player/enemy collisions
 * [x] Temporary invincibility after taking damage
 * [x] Life lost when an enemy reaches the bottom of the screen
 * [x] Game Over system
 * [x] Restart system
-* [ ] Blue enemies
-* [ ] Red enemies
-* [ ] Score system
+* [x] Score system
+* [x] Enemy waves
+* [x] Multiple enemy types with different characteristics
 * [ ] Sound effects
 * [ ] Music
 * [ ] Final visual identity
+* [ ] Final boss
 
 > This list will evolve throughout the development of the game.
+
+---
+
+## Enemy types
+
+Yellow currently faces three different types of enemies:
+
+* **Green** — slower enemy with more health.
+* **Blue** — faster enemy with less health.
+* **Red** — dangerous enemy that can directly cost a life on contact.
+
+Each enemy type has different characteristics, making the gameplay progressively more challenging.
+
+---
+
+## Waves
+
+The game currently contains five enemy waves:
+
+* **Wave 1** — 20 Green enemies
+* **Wave 2** — 15 Blue enemies
+* **Wave 3** — 10 Red enemies
+* **Wave 4** — 10 Green, 8 Blue and 5 Red enemies
+* **Wave 5** — 15 Green, 10 Blue and 8 Red enemies
+
+The waves are designed to progressively increase the difficulty and introduce different enemy types.
+
+The final boss **White** is planned for a future version.
 
 ---
 
@@ -80,7 +111,7 @@ The project is intentionally being developed step by step rather than following 
 
 New mechanics, ideas and visual elements are added progressively as the project evolves.
 
-The current version focuses on the core gameplay loop: **moving, shooting, fighting enemies and managing lives**.
+The current version focuses on the core gameplay loop: **moving, shooting, fighting enemies, progressing through waves and managing lives**.
 
 ---
 
@@ -95,6 +126,8 @@ Yellow/
 └── assets/
     ├── yellow.png
     ├── green.png
+    ├── blue.png
+    ├── red.png
     └── heart.png
 ```
 
