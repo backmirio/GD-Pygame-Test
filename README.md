@@ -75,7 +75,7 @@ New mechanics, ideas and visual elements will be added progressively.
 
 ---
 
-## 📂 Project structure
+## Project structure
 
 ```text
 Yellow/
@@ -101,4 +101,4 @@ Each version represents a step in the development of Yellow and my learning jour
 
 **Yellow** is a personal learning project developed during my BTS.
 
-Built with Python 🐍 and Pygame 🎮
+Built with Python and Pygame
