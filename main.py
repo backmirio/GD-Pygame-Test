@@ -15,6 +15,11 @@ game_state = "menu"
 
 player_lives = 3
 score = 0
+wave = 1
+wave_started = False
+wave_enemies_spawned = 0
+wave_delay = 2
+wave_delay_timer = 0
 invincible_timer = 0
 invincible_duration = 1.5
 
@@ -25,15 +30,15 @@ shot_delay = 0.2
 
 green_speed = 75
 green_timer = 0
-green_delay = 1.25
+green_delay = 0.8
 
 blue_speed = 100
 blue_timer = 0
-blue_delay = 2.5
+blue_delay = 1
 
-red_speed = 85
+red_speed = 90
 red_timer = 0
-red_delay = 3.5
+red_delay = 1.5
 
 greens = []
 blues = []
@@ -156,7 +161,7 @@ while running:
 
         green_timer += dt
 
-        if green_timer >= green_delay:
+        if green_timer >= green_delay and wave == 1 and wave_enemies_spawned < 20:
 
             greens.append({
                 "pos": pygame.Vector2(
@@ -170,10 +175,14 @@ while running:
             })
 
             green_timer = 0
+            wave_enemies_spawned += 1
+        if wave == 1 and wave_enemies_spawned == 20:
+            wave_started = True 
 
         blue_timer += dt
-
-        if blue_timer >= blue_delay:
+        if wave != 2:
+            blue_timer = 0
+        if blue_timer >= blue_delay and wave >= 2 and wave_enemies_spawned < 15:
 
             blues.append({
                 "pos": pygame.Vector2(
@@ -187,10 +196,15 @@ while running:
             })
 
             blue_timer = 0
+            wave_enemies_spawned += 1
+
+        if wave == 2 and wave_enemies_spawned == 15:
+            wave_started = True
 
         red_timer += dt
-
-        if red_timer >= red_delay:
+        if wave != 3:
+            red_timer = 0
+        if red_timer >= red_delay and wave == 3 and wave_enemies_spawned < 10:
 
             reds.append({
                 "pos": pygame.Vector2(
@@ -204,6 +218,9 @@ while running:
             })
 
             red_timer = 0
+            wave_enemies_spawned += 1
+        if wave == 3 and wave_enemies_spawned == 10:
+            wave_started = True
 
         shot_timer += dt
 
@@ -437,6 +454,15 @@ while running:
         for green in greens_to_remove:
             greens.remove(green)
 
+        if wave_started and len(greens) == 0 and len(blues) == 0 and len(reds) == 0:
+            wave_delay_timer += dt
+
+            if wave_delay_timer >= wave_delay:
+                wave += 1
+                wave_started = False
+                wave_enemies_spawned = 0
+                wave_delay_timer = 0
+
         player_shots = [
             shot
             for shot in player_shots
@@ -471,6 +497,20 @@ while running:
             (
                 screen.get_width() - score_text.get_width() - 20,
                 10,
+            )
+        )
+
+        wave_text = font_button.render(
+            f"Wave: {wave}",
+            True,
+            (240, 255, 0)
+        )
+
+        screen.blit(
+            wave_text,
+            (
+                screen.get_width() - wave_text.get_width() - 20,
+                50
             )
         )
 
