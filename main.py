@@ -5,7 +5,7 @@ pygame.init()
 
 pygame.display.set_caption("Projet Yellow")
 
-screen = pygame.display.set_mode((1000, 800))
+screen = pygame.display.set_mode((1000, 900))
 
 clock = pygame.time.Clock()
 
