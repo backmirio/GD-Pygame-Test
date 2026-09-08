@@ -82,7 +82,13 @@ Yellow/
 │
 ├── main.py
 ├── README.md
-└── ...
+│
+└── assets/
+    ├── yellow.png
+    ├── enemies/
+    ├── backgrounds/
+    ├── sounds/
+    └── music/
 ```
 
 The structure of the project will evolve as the game becomes more complex.
