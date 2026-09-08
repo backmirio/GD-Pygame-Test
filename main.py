@@ -19,6 +19,9 @@ wave = 1
 wave_started = False
 wave_enemies_spawned = 0
 wave_delay = 2
+green_enemies_spawned = 0
+blue_enemies_spawned = 0
+red_enemies_spawned = 0
 wave_delay_timer = 0
 invincible_timer = 0
 invincible_duration = 1.5
@@ -34,11 +37,11 @@ green_delay = 0.8
 
 blue_speed = 100
 blue_timer = 0
-blue_delay = 1
+blue_delay = 1.25
 
 red_speed = 90
 red_timer = 0
-red_delay = 1.5
+red_delay = 2
 
 greens = []
 blues = []
@@ -74,6 +77,17 @@ while running:
     dt = clock.tick(60) / 1000
 
     for event in pygame.event.get():
+
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_F4:
+                wave = 4
+                wave_started = False
+                green_enemies_spawned = 0
+                blue_enemies_spawned = 0
+                red_enemies_spawned = 0
+                greens.clear()
+                blues.clear()
+                reds.clear()
 
         if event.type == pygame.QUIT:
             running = False
@@ -161,7 +175,7 @@ while running:
 
         green_timer += dt
 
-        if green_timer >= green_delay and wave == 1 and wave_enemies_spawned < 20:
+        if green_timer >= green_delay and wave == 1 and green_enemies_spawned < 20:
 
             greens.append({
                 "pos": pygame.Vector2(
@@ -175,14 +189,45 @@ while running:
             })
 
             green_timer = 0
-            wave_enemies_spawned += 1
-        if wave == 1 and wave_enemies_spawned == 20:
+            green_enemies_spawned += 1
+        if wave == 4 and green_timer >= green_delay and green_enemies_spawned < 10:
+
+            greens.append({
+                "pos": pygame.Vector2(
+                    random.randint(
+                        25,
+                        screen.get_width() - 25
+                    ),
+                    50
+                ),
+                "hp": 3  
+            })
+            green_timer = 0
+            green_enemies_spawned += 1
+
+        if wave == 5 and green_timer >= green_delay and green_enemies_spawned < 15:
+
+            greens.append({
+                "pos": pygame.Vector2(
+                    random.randint(
+                        25,
+                        screen.get_width() - 25
+                    ),
+                    50
+                ),
+                "hp": 3
+            })
+
+            green_timer = 0
+            green_enemies_spawned += 1
+            
+        if wave == 1 and green_enemies_spawned == 20:
             wave_started = True 
 
         blue_timer += dt
-        if wave != 2:
+        if wave != 2 and wave != 4 and wave != 5:
             blue_timer = 0
-        if blue_timer >= blue_delay and wave >= 2 and wave_enemies_spawned < 15:
+        if wave == 2 and blue_timer >= blue_delay and blue_enemies_spawned < 15:
 
             blues.append({
                 "pos": pygame.Vector2(
@@ -196,15 +241,47 @@ while running:
             })
 
             blue_timer = 0
-            wave_enemies_spawned += 1
+            blue_enemies_spawned += 1
 
-        if wave == 2 and wave_enemies_spawned == 15:
+        if wave == 4 and blue_timer >= blue_delay and blue_enemies_spawned < 8:
+
+            blues.append({
+                "pos": pygame.Vector2(
+                    random.randint(
+                        25,
+                        screen.get_width() - 25
+                    ),
+                    50
+                ),
+                "hp": 2
+            })
+
+            blue_timer = 0
+            blue_enemies_spawned += 1
+
+        if wave == 5 and blue_timer >= blue_delay and blue_enemies_spawned < 10:
+
+            blues.append({
+                "pos": pygame.Vector2(
+                    random.randint(
+                        25,
+                        screen.get_width() - 25
+                    ),
+                    50
+                ),
+                "hp": 2
+            })
+
+            blue_timer = 0
+            blue_enemies_spawned += 1            
+
+        if wave == 2 and blue_enemies_spawned == 15:
             wave_started = True
 
         red_timer += dt
-        if wave != 3:
+        if wave != 3 and wave != 4 and wave != 5:
             red_timer = 0
-        if red_timer >= red_delay and wave == 3 and wave_enemies_spawned < 10:
+        if wave == 3 and red_timer >= red_delay and red_enemies_spawned < 10:
 
             reds.append({
                 "pos": pygame.Vector2(
@@ -218,8 +295,47 @@ while running:
             })
 
             red_timer = 0
-            wave_enemies_spawned += 1
-        if wave == 3 and wave_enemies_spawned == 10:
+            red_enemies_spawned += 1
+
+        if wave == 5 and red_timer >= red_delay and red_enemies_spawned < 8:
+
+            reds.append({
+                "pos": pygame.Vector2(
+                    random.randint(
+                        25,
+                        screen.get_width() - 25
+                    ),
+                    50
+                ),
+                "hp": 1
+            })
+
+            red_timer = 0
+            red_enemies_spawned += 1
+
+        if wave == 4 and red_timer >= red_delay and red_enemies_spawned < 5:
+
+            reds.append({
+                "pos": pygame.Vector2(
+                    random.randint(
+                        25,
+                        screen.get_width() - 25
+                    ),
+                    50
+                ),
+                "hp": 1
+            })
+
+            red_timer = 0
+            red_enemies_spawned += 1
+
+        if wave == 4 and green_enemies_spawned == 10 and blue_enemies_spawned == 8 and red_enemies_spawned == 5:
+            wave_started = True
+
+        if wave == 3 and red_enemies_spawned == 10:
+            wave_started = True
+
+        if wave == 5 and green_enemies_spawned == 15 and blue_enemies_spawned == 10 and red_enemies_spawned == 8:
             wave_started = True
 
         shot_timer += dt
@@ -462,6 +578,9 @@ while running:
                 wave_started = False
                 wave_enemies_spawned = 0
                 wave_delay_timer = 0
+                green_enemies_spawned = 0
+                blue_enemies_spawned = 0
+                red_enemies_spawned = 0
 
         player_shots = [
             shot
