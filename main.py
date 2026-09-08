@@ -1,4 +1,5 @@
 import pygame
+import random
 
 pygame.init()
 
@@ -13,16 +14,19 @@ running = True
 game_state = "menu"
 
 player_lives = 3
+invincible_timer = 0
+invincible_duration = 1.5
 
-player_speed = 500
+player_speed = 700
 shot_speed = 700
 shot_timer = 0
 shot_delay = 0.2
 
 green_speed = 150
 green_timer = 0
-green_delay = 2
-green_active = False
+green_delay = 1
+
+greens = []
 
 player_img = pygame.image.load("assets/yellow.png").convert_alpha()
 player_img = pygame.transform.scale(player_img, (50, 50))
@@ -43,14 +47,10 @@ player_pos = pygame.Vector2(
     screen.get_height() / 1.040
 )
 
-green_pos = pygame.Vector2(
-    screen.get_width() / 2,
-    50
-)
-
 while running:
 
     dt = clock.tick(60) / 1000
+
     for event in pygame.event.get():
 
         if event.type == pygame.QUIT:
@@ -68,6 +68,7 @@ while running:
     if game_state == "menu":
 
         font_title = pygame.font.Font(None, 80)
+
         title = font_title.render(
             "PROJET YELLOW",
             True,
@@ -82,7 +83,12 @@ while running:
             )
         )
 
-        play_button = pygame.Rect(400, 350, 200, 80)
+        play_button = pygame.Rect(
+            400,
+            350,
+            200,
+            80
+        )
 
         pygame.draw.rect(
             screen,
@@ -102,11 +108,20 @@ while running:
             center=play_button.center
         )
 
-        screen.blit(text_play, text_rect)
+        screen.blit(
+            text_play,
+            text_rect
+        )
 
     elif game_state == "game":
 
         keys = pygame.key.get_pressed()
+
+        if invincible_timer > 0:
+            invincible_timer -= dt
+
+        if player_lives <= 0:
+            game_state = "game_over"
 
         if keys[pygame.K_LEFT]:
             player_pos.x -= player_speed * dt
@@ -122,37 +137,22 @@ while running:
         if player_pos.x > screen.get_width() - 25:
             player_pos.x = screen.get_width() - 25
 
-        if green_active:
+        green_timer += dt
 
-            green_pos.y += green_speed * dt
+        if green_timer >= green_delay:
 
-            screen.blit(
-            green_img,
-            (
-                int(green_pos.x - 25),
-                int(green_pos.y - 25)
-            )
-        )
-
-            if green_pos.y > screen.get_height() + 25:
-                green_active = False
-                green_timer = 0
-
-
-        else:
-
-            green_timer += dt
-
-            if green_timer >= green_delay:
-
-                green_pos = pygame.Vector2(
-                    screen.get_width() / 2,
+            greens.append({
+                "pos": pygame.Vector2(
+                    random.randint(
+                        25,
+                        screen.get_width() - 25
+                    ),
                     50
-                )
+                ),
+                "hp": 3
+            })
 
-                green_active = True
-                green_timer = 0
-
+            green_timer = 0
 
         shot_timer += dt
 
@@ -166,6 +166,7 @@ while running:
                     15
                 )
             )
+
             shot_timer = 0
 
         for shot in player_shots:
@@ -178,25 +179,83 @@ while running:
                 shot
             )
 
-        if green_active:
+        for green in greens:
+
+            green["pos"].y += green_speed * dt
 
             green_rect = green_img.get_rect(
                 center=(
-                    int(green_pos.x),
-                    int(green_pos.y)
+                    int(green["pos"].x),
+                    int(green["pos"].y)
+                )
+            )
+
+            if green_rect.colliderect(player_img.get_rect(
+                center=(int(player_pos.x), int(player_pos.y))
+            )) and invincible_timer <= 0:
+                
+                player_lives -= 1
+                invincible_timer = invincible_duration
+                greens.remove(green)
+                break
+
+            screen.blit(
+                green_img,
+                (
+                    int(green["pos"].x - 25),
+                    int(green["pos"].y - 25)
+                )
+            )
+
+            screen.blit(
+                green_img,
+                (
+                    int(green["pos"].x - 25),
+                    int(green["pos"].y - 25)
+                )
+            )
+
+            pygame.draw.rect(
+                screen,
+                (100, 100, 100),
+                (
+                    int(green["pos"].x - 25),
+                    int(green["pos"].y - 35),
+                    50,
+                    5
+                )
+            )
+
+            pygame.draw.rect(
+                screen,
+                (0, 255, 0),
+                (
+                    int(green["pos"].x - 25),
+                    int(green["pos"].y - 35),
+                    int(50 * (green["hp"] / 3)),
+                    5
                 )
             )
 
             for shot in player_shots:
-                
-                if shot.colliderect(green_rect):
 
-                    green_active = False
+                if green_rect.colliderect(shot):
+
+                    green["hp"] -= 1
                     player_shots.remove(shot)
+
                     break
 
+        greens = [
+            green
+            for green in greens
+            if green["hp"] > 0
+            and green["pos"].y < screen.get_height() + 25
+        ]
+
         player_shots = [
-            shot for shot in player_shots
+            shot
+            for shot in player_shots
             if shot.bottom > 0
         ]
 
@@ -212,9 +271,29 @@ while running:
 
             screen.blit(
                 heart_img,
-                (20 + i * 40, 10)
+                (
+                    20 + i * 40,
+                    10
+                )
             )
 
+    elif game_state == "game_over":
+
+        font_game_over = pygame.font.Font(None, 100)
+
+        game_over_text = font_game_over.render(
+            "GAME OVER",
+            True,
+            (240, 255, 0)
+        )
+
+        screen.blit(
+            game_over_text,
+            (
+                screen.get_width() / 2 - game_over_text.get_width() / 2,
+                200
+            )
+        )
     pygame.display.flip()
 
 pygame.quit()
