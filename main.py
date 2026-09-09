@@ -701,6 +701,7 @@ while running:
                     green_timer = 0
                     blue_timer = 0
                     red_timer = 0
+                    wave = 1
                     
                     invincible_timer = 0
     pygame.display.flip()
