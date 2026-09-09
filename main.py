@@ -65,6 +65,12 @@ red_img = pygame.transform.scale(red_img, (50, 50))
 heart_img = pygame.image.load("assets/heart.png").convert_alpha()
 heart_img = pygame.transform.scale(heart_img, (30, 30))
 
+background_img = pygame.image.load("assets/background.png").convert()
+background_img = pygame.transform.scale(background_img, (1000, 900))
+
+background_game_img = pygame.image.load("assets/background_game.png").convert()
+background_game_img = pygame.transform.scale(background_game_img, (1000, 900))
+
 player_shots = []
 
 player_pos = pygame.Vector2(
@@ -103,33 +109,41 @@ while running:
 
     if game_state == "menu":
 
-        font_title = pygame.font.Font(None, 80)
-
-        title = font_title.render(
-            "YELLOW",
-            True,
-            (240, 255, 0)
-        )
-
-        screen.blit(
-            title,
-            (
-                screen.get_width() / 2 - title.get_width() / 2,
-                100
-            )
-        )
+        screen.blit(background_img, (0, 0))
 
         play_button = pygame.Rect(
             400,
-            350,
+            750,
             200,
             80
         )
 
+        mouse_pos = pygame.mouse.get_pos()
+
+        if play_button.collidepoint(mouse_pos):
+            button_color = (220, 220, 0)
+            shadow_color = (100, 100, 0)
+        else:
+            button_color = (200, 200, 0)
+            shadow_color = (40, 40, 40)
+
         pygame.draw.rect(
             screen,
-            (240, 255, 0),
+            shadow_color,
+            play_button.move(6, 6)
+        )
+
+        pygame.draw.rect(
+            screen,
+            button_color,
             play_button
+        )
+
+        pygame.draw.rect(
+            screen,
+            (0, 0, 0),
+            play_button,
+            5
         )
 
         font_button = pygame.font.Font(None, 50)
@@ -150,6 +164,8 @@ while running:
         )
 
     elif game_state == "game":
+
+        screen.blit(background_game_img, (0, 0))
 
         keys = pygame.key.get_pressed()
 
